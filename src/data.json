@@ -1,0 +1,30 @@
+{
+    "companies": [
+      {
+        "name": "Company A",
+        "location": "Location A",
+        "linkedin": "https://linkedin.com/companyA",
+        "emails": ["email1@companya.com", "email2@companya.com"],
+        "phoneNumbers": ["+1234567890", "+0987654321"],
+        "comments": "Company A description",
+        "communicationPeriodicity": "2 weeks",
+        "communications": [
+          { "type": "LinkedIn Post", "date": "2023-09-01", "status": "completed", "notes": "Initial post" },
+          { "type": "Email", "date": "2023-09-10", "status": "due", "notes": "Follow up email" }
+        ]
+      },
+      {
+        "name": "Company B",
+        "location": "Location B",
+        "linkedin": "https://linkedin.com/companyB",
+        "emails": ["email1@companyb.com"],
+        "phoneNumbers": ["+1234567890"],
+        "comments": "Company B description",
+        "communicationPeriodicity": "1 month",
+        "communications": [
+          { "type": "Phone Call", "date": "2023-10-01", "status": "overdue", "notes": "Call to follow up" }
+        ]
+      }
+    ]
+  }
+  
