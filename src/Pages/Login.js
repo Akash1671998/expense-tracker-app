@@ -39,12 +39,14 @@ function Login({ setIsAuthenticated }) {
       const { success, message, error } = result;
       const jwtToken = result.data?.token;
       const name = result.data?.name;
+      const role = result.data.role;
 
       if (success) {
         setIsAuthenticated(true);
         handleSuccess(message);
         sessionStorage.setItem("token", jwtToken);
         sessionStorage.setItem("loggedInUser", name);
+        sessionStorage.setItem("role", role);
         setTimeout(() => {
           navigate("/expense-table");
         }, 1000);

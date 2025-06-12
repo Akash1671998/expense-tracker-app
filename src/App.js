@@ -10,6 +10,9 @@ import ExpenseTable from "./Pages/ExpenseTable";
 import Navbar from "./Pages/Navbar";
 import NotFound from "./Pages/NotFound";
 import ChangePassword from "./Pages/ChangePassword";
+import Dashboard from "./Pages/Dashboard";
+import UserDetails from "./Pages/UserDetails";
+import PasswordResetComponent from "./Pages/adminChangeUserPassword";
 
 function App() {
   const storedToken = sessionStorage.getItem("token");
@@ -39,7 +42,7 @@ function App() {
         location.pathname === "/login" ||
         location.pathname === "/signup"
       ) {
-        window.history.replaceState({}, "", "/home");
+        window.history.replaceState({}, "", "/dashboard");
       }
     } else {
       setIsAuthenticated(false);
@@ -62,7 +65,30 @@ function App() {
         />
         <Route path="/signup" element={<Signup />} />
         <Route path="*" element={<NotFound />} />
-
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+         <Route
+          path="/change-user-password"
+          element={
+            <PrivateRoute>
+              <PasswordResetComponent />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/user-profile"
+          element={
+            <PrivateRoute>
+              <UserDetails />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/home"
           element={
@@ -99,7 +125,7 @@ function App() {
           }
         />
 
-          <Route
+        <Route
           path="/ChangePassword"
           element={
             <PrivateRoute>

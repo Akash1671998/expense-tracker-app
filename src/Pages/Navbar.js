@@ -1,4 +1,3 @@
-// src/components/Navbar.js
 import React from "react";
 import {
   AppBar,
@@ -9,70 +8,57 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-
 import LogoutIcon from "@mui/icons-material/Logout";
-import TableChartIcon from "@mui/icons-material/TableChart";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import LockResetIcon from "@mui/icons-material/LockReset";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-
 import { useNavigate, useLocation } from "react-router-dom";
+import adminMenu from "../menu/adminMenu";
+import userMenu from "../menu/userMenu";
 
 function Navbar({ setIsAuthenticated }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const UserRole = sessionStorage.getItem("role");
+  const UserName = sessionStorage.getItem("loggedInUser");
+  const menuItems = UserRole === "ROLE_ADMIN" ? adminMenu : userMenu;
+  const currentTab = menuItems.findIndex(
+    (item) => item.path === location.pathname
+  );
+  const handleTabChange = (event, newValue) => {
+    navigate(menuItems[newValue].path);
+  };
 
   const handleLogout = () => {
     sessionStorage.removeItem("token");
+    sessionStorage.removeItem("loggedInUser");
+    sessionStorage.removeItem("role")
     setIsAuthenticated(false);
     navigate("/login");
-  };
-
-  const pathToTab = {
-    "/expense-table": 0,
-    "/add-expense": 1,
-    "/ChangePassword": 2,
-  };
-
-  const tabToPath = ["/expense-table", "/add-expense", "/ChangePassword"];
-
-  const currentTab = pathToTab[location.pathname] ?? false;
-
-  const handleTabChange = (event, newValue) => {
-    navigate(tabToPath[newValue]);
   };
 
   return (
     <AppBar position="static">
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Tabs
-          value={currentTab}
+          value={currentTab !== -1 ? currentTab : false}
           onChange={handleTabChange}
           textColor="inherit"
           indicatorColor="secondary"
         >
-          <Tab
-            icon={<TableChartIcon />}
-            label={<Typography sx={{ fontWeight: "bold" }}>Expense</Typography>}
-          />
-          <Tab
-            icon={<AddCircleIcon />}
-            label={
-              <Typography sx={{ fontWeight: "bold" }}>Add Expense</Typography>
-            }
-          />
-          <Tab
-            icon={<LockResetIcon />}
-            label={
-              <Typography sx={{ fontWeight: "bold" }}>
-                Change Password
-              </Typography>
-            }
-          />
+          {menuItems.map((item, index) => (
+            <Tab
+              key={index}
+              icon={item.icon}
+              label={
+                <Typography sx={{ fontWeight: "bold" }}>
+                  {item.label}
+                </Typography>
+              }
+            />
+          ))}
         </Tabs>
+
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <IconButton color="inherit" onClick={handleLogout}>
-            <AccountCircleIcon />
+            {UserName}
           </IconButton>
           <IconButton color="inherit" onClick={handleLogout}>
             <LogoutIcon />
