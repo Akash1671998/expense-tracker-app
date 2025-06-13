@@ -7,6 +7,7 @@ import {
   IconButton,
   Typography,
   Box,
+  Avatar,
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -56,14 +57,43 @@ function Navbar({ setIsAuthenticated }) {
           ))}
         </Tabs>
 
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <IconButton color="inherit" onClick={handleLogout}>
-            {UserName}
-          </IconButton>
-          <IconButton color="inherit" onClick={handleLogout}>
-            <LogoutIcon />
-          </IconButton>
-        </Box>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          px: 2,
+          py: 0.5,
+          borderRadius: "30px",
+          bgcolor: "secondary.main",
+          color: "white",
+          fontWeight: "bold",
+          boxShadow: 2,
+        }}
+      >
+        <Avatar sx={{ width: 30, height: 30, mr: 1, bgcolor: "primary.light" }}>
+          {UserName?.[0]?.toUpperCase()}
+        </Avatar>
+        <Typography variant="body1">{UserName}</Typography>
+      </Box>
+
+      <tooltip title="Logout">
+        <IconButton
+          color="secondary"
+          onClick={handleLogout}
+          sx={{
+            bgcolor: "white",
+            "&:hover": {
+              bgcolor: "error.light",
+              color: "white",
+            },
+            transition: "0.3s",
+          }}
+        >
+          <LogoutIcon />
+        </IconButton>
+      </tooltip>
+    </Box>
       </Toolbar>
     </AppBar>
   );

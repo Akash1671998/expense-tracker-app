@@ -12,10 +12,19 @@ import {
   TextField,
   TablePagination,
   Box,
+  IconButton,
 } from "@mui/material";
 import { application } from "../../authentication/auth";
+import TuneIcon from "@mui/icons-material/Tune";
 
-const CustomTable = ({ title, apiUrl, columns }) => {
+const CustomTable = ({
+  title,
+  apiUrl,
+  columns,
+  searchEnable,
+  filterEnable,
+  updateList
+}) => {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
@@ -34,7 +43,7 @@ const CustomTable = ({ title, apiUrl, columns }) => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [updateList]);
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value.toLowerCase());
@@ -52,21 +61,44 @@ const CustomTable = ({ title, apiUrl, columns }) => {
     setPage(0);
   };
 
+  function handleTuneClick() {
+    alert("filter");
+  }
   return (
-    <Paper elevation={3} style={{ padding: 20, marginTop: 20 ,  width: "97%",  maxWidth: "6000px",
+    <Paper
+      elevation={3}
+      style={{
+        padding: 20,
+        marginTop: 20,
+        width: "97%",
+        maxWidth: "6000px",
         marginLeft: "auto",
-        marginRight: "auto", }} >
+        marginRight: "auto",
+      }}
+    >
       <Typography variant="h6" gutterBottom>
         {title}
       </Typography>
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-        <TextField
-          variant="outlined"
-          placeholder="Search..."
-          value={search}
-          onChange={handleSearchChange}
-          style={{ width: 300 }} // or 250, adjust as needed
-        />
+        {searchEnable && (
+          <TextField
+            variant="outlined"
+            placeholder="Search..."
+            value={search}
+            onChange={handleSearchChange}
+            style={{ width: 300 }}
+          />
+        )}
+        <IconButton
+          onClick={handleTuneClick}
+          color="success"
+          sx={{
+            width: 60,
+            height: 60,
+          }}
+        >
+          <TuneIcon sx={{ fontSize: 36, alignItems: "center" }} />
+        </IconButton>
       </Box>
 
       <TableContainer>
@@ -94,7 +126,9 @@ const CustomTable = ({ title, apiUrl, columns }) => {
                       key={col.field}
                       style={{ fontWeight: "500", fontSize: "15px" }}
                     >
-                      {row[col.field]}
+                      {col.renderCell
+                        ? col.renderCell({ row })
+                        : row[col.field]}
                     </TableCell>
                   ))}
                 </TableRow>

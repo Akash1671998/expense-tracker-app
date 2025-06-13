@@ -196,7 +196,7 @@ function Signup() {
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
-              <MenuItem value="ROLE_ADMIN">Admin</MenuItem>
+              {/* <MenuItem value="ROLE_ADMIN">Admin</MenuItem> */}
               <MenuItem value="ROLE_USERS">User</MenuItem>
             </Select>
           </FormControl>
