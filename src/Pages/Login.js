@@ -1,15 +1,26 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Box, Button, TextField, Typography, Grid, Paper } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Grid,
+  Paper,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import { ToastContainer } from "react-toastify";
 import { APIUrl, handleError, handleSuccess } from "../utils";
 import loginIllustration from "../Images/Expense.svg";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 function Login({ setIsAuthenticated }) {
   const [loginInfo, setLoginInfo] = useState({
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -53,13 +64,16 @@ function Login({ setIsAuthenticated }) {
       } else if (error) {
         const details = error?.details[0]?.message;
         handleError(details);
-      } else {
-        handleError(message);
       }
     } catch (err) {
       handleError(err.message || "Login failed");
     }
   };
+
+  const toggleVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+  console.log(".................", showPassword);
   return (
     <Grid
       container
@@ -73,13 +87,13 @@ function Login({ setIsAuthenticated }) {
         xs={false}
         sm={6}
         sx={{
-          backgroundColor: "#ffffff",
+          background: "linear-gradient(135deg,rgb(179, 215, 244),rgb(226, 187, 226))", // Light blue to cyan
+          color: "#fff",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           flexDirection: "column",
           p: 4,
-          boxShadow: 3,
           borderRadius: "0 20px 20px 0",
         }}
       >
@@ -112,6 +126,7 @@ function Login({ setIsAuthenticated }) {
           px: 2,
           py: 4,
           borderRadius: "20px 0 0 20px",
+          background: "linear-gradient(135deg, #ffffff,rgb(230, 243, 245))",
         }}
       >
         <Box
@@ -155,11 +170,20 @@ function Login({ setIsAuthenticated }) {
             size="small"
             label="Password"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={loginInfo.password}
             onChange={handleChange}
             margin="normal"
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={toggleVisibility}>
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <Button
             type="submit"

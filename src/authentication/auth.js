@@ -17,7 +17,7 @@ const errorHandler = (error) => {
   if (error.response?.status === 403) {
     sessionStorage.removeItem("token");
      window.dispatchEvent(new Event("logout"));
-    window.location = "/login";
+    window.location = "/expense-app/login";
   }
   return Promise.reject(error);
 };

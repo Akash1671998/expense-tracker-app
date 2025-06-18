@@ -39,8 +39,8 @@ function App() {
 
       if (
         location.pathname === "/" ||
-        location.pathname === "/login" ||
-        location.pathname === "/signup"
+        location.pathname === "/expense-app/login" ||
+        location.pathname === "/expense-app/signup"
       ) {
         window.history.replaceState({}, "", "/dashboard");
       }
@@ -73,7 +73,7 @@ function App() {
             </PrivateRoute>
           }
         />
-         <Route
+        <Route
           path="/change-user-password"
           element={
             <PrivateRoute>

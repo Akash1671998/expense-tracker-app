@@ -13,7 +13,7 @@ const UserDetails = () => {
   const [rowId, setRowId] = useState("");
   const [updateList, setUpdateList] = useState(Date.now());
   const [confirmDelete, setConfirmDelete] = useState(false);
-   const [selectedRows, setSelectedRows] = useState(null);
+  const [selectedRows, setSelectedRows] = useState(null);
   const [notify, setNotify] = useState({
     isOpen: false,
     message: "",
@@ -35,10 +35,23 @@ const UserDetails = () => {
   const handleDialogSubmit = (updatedData) => {
     application
       .post(`${APIUrl}/users/update/${rowId}`, updatedData)
-      .then((res) => {
-        console.log("User updated", res.data);
+      .then((response) => {
+        setNotify({
+          isOpen: true,
+          type: "success",
+          pagename: "User Details",
+          message: response.data.message,
+        });
         setDialogOpen(false);
         setUpdateList(Date.now());
+      })
+      .catch((error) => {
+        setNotify({
+          isOpen: true,
+          type: "error",
+          pagename: "User Details",
+          message: error.response?.data?.message,
+        });
       });
   };
 

@@ -23,7 +23,7 @@ const CustomTable = ({
   columns,
   searchEnable,
   filterEnable,
-  updateList
+  updateList,
 }) => {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");

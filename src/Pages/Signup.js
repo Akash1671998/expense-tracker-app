@@ -80,14 +80,14 @@ function Signup() {
         xs={false}
         sm={6}
         sx={{
-          backgroundColor: '#ffffff',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
+          background: "linear-gradient(135deg,rgb(179, 215, 244),rgb(226, 187, 226))", // Light blue to cyan
+          color: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
           p: 4,
-          boxShadow: 3,
-          borderRadius: '0 20px 20px 0',
+          borderRadius: "0 20px 20px 0",
         }}
       >
         <img
@@ -115,12 +115,13 @@ function Signup() {
         elevation={6}
         square
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           px: 2,
           py: 4,
-          borderRadius: '20px 0 0 20px',
+          borderRadius: "20px 0 0 20px",
+          background: "linear-gradient(135deg, #ffffff,rgb(230, 243, 245))",
         }}
       >
         <Box
