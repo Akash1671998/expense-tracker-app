@@ -1,15 +1,31 @@
-import React, { useState } from "react";
-import { TextField, Button, Box, Typography, Paper } from "@mui/material";
-import { handleError, handleSuccess } from "../utils";
+import React, { useState, useEffect } from "react";
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Paper,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Switch,
+  FormControlLabel,
+} from "@mui/material";
+import { handleSuccess } from "../utils";
 import { application } from "../authentication/auth";
-import { useNavigate } from "react-router-dom";
 import CTLNotification from "./Notification";
 
 function ExpenseForm() {
   const [expenseInfo, setExpenseInfo] = useState({
     amount: "",
     text: "",
+    category: "",
+    accountType: "",
+    date: "",
+    email: false,
   });
+
   const [notify, setNotify] = useState({
     isOpen: false,
     message: "",
@@ -17,28 +33,54 @@ function ExpenseForm() {
     pagename: "",
   });
 
+  const accountTypes = ["Cash", "Online", "Bank Account", "Card"];
+  const categories = [
+    "Food",
+    "Health",
+    "Education",
+    "Beauty",
+    "Travelling",
+    "Gift",
+    "Other",
+  ];
+
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    setExpenseInfo((prev) => ({ ...prev, date: today }));
+  }, []);
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setExpenseInfo((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setExpenseInfo((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   function AddTransaction() {
-    if (!expenseInfo.amount || !expenseInfo.text) {
+    const { amount, text } = expenseInfo;
+
+    if (!amount || !text) {
       setNotify({
         isOpen: true,
         type: "warning",
         pagename: "Expense Add",
-        message: "Please Fill The Information In Text Box",
+        message: "Please Fill The Required Fields",
       });
       return;
     }
+
     application
       .post("/expense/create", expenseInfo)
       .then((response) => {
         handleSuccess(response?.data.message);
+        const today = new Date().toISOString().split("T")[0];
         setExpenseInfo({
           amount: "",
           text: "",
+          category: "",
+          accountType: "",
+          date: today,
         });
         setNotify({
           isOpen: true,
@@ -52,42 +94,121 @@ function ExpenseForm() {
           isOpen: true,
           type: "error",
           pagename: "Add Expense",
-          message: error.response.data.message,
+          message: error.response?.data?.message || "Something went wrong",
         });
       });
   }
 
   return (
-    <Box sx={{ maxWidth: 500, margin: "auto", mt: 10 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h5" gutterBottom>
-          Expense Tracker
-        </Typography>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    <Box
+      sx={{
+        minHeight: "90vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#f4f6f8",
+      }}
+    >
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+          width: "100%",
+          maxWidth: 500,
+          borderRadius: 3,
+          backgroundColor: "#fff",
+        }}
+      >
+       
+          <Typography variant="h5" gutterBottom textAlign="center">
+            Add New Expense
+          </Typography>
+         
+       
+
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
           <TextField
-            label="Expense Detail"
-            variant="outlined"
-            name="text"
-            value={expenseInfo.text}
+            label="Date"
+            type="date"
+            name="date"
+            value={expenseInfo.date}
             onChange={handleChange}
-            placeholder="Enter your Expense Detail..."
+            InputLabelProps={{ shrink: true }}
             fullWidth
           />
+
+          <FormControl fullWidth>
+            <InputLabel id="account-type-label">Account Type</InputLabel>
+            <Select
+              labelId="account-type-label"
+              name="accountType"
+              value={expenseInfo.accountType}
+              onChange={handleChange}
+              label="Account Type"
+            >
+              {accountTypes &&
+                accountTypes.map((type) => (
+                  <MenuItem key={type} value={type}>
+                    {type}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <InputLabel id="category-label">Category</InputLabel>
+            <Select
+              labelId="category-label"
+              name="category"
+              value={expenseInfo.category}
+              onChange={handleChange}
+              label="Category"
+            >
+              {categories &&
+                categories.map((cat) => (
+                  <MenuItem key={cat} value={cat}>
+                    {cat}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+
           <TextField
             label="Amount"
-            variant="outlined"
             name="amount"
             type="number"
             value={expenseInfo.amount}
             onChange={handleChange}
-            placeholder="Enter your Amount..."
+            placeholder="Enter amount"
             fullWidth
           />
+          <TextField
+            label="Description"
+            name="text"
+            value={expenseInfo.text}
+            onChange={handleChange}
+            placeholder="Write about the expense..."
+            multiline
+            rows={3}
+            fullWidth
+          />
+           <FormControlLabel
+            label="Send Email Notification"
+            labelPlacement="start"
+            control={
+              <Switch
+                name="email"
+                checked={expenseInfo.email}
+                onChange={handleChange}
+              />
+            }
+          />
+
           <Button
             variant="contained"
-            type="submit"
             color="primary"
             onClick={AddTransaction}
+            sx={{ mt: 1 }}
           >
             Add Expense
           </Button>

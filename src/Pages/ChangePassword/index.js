@@ -1,27 +1,19 @@
 import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  TextField,
-  Button,
-  Typography,
-  Snackbar,
-  Alert,
-} from "@mui/material";
+import { TextField, Button, Typography, Box, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import CTLNotification from "../Notification";
 import { application } from "../../authentication/auth";
 
-
 const ChangePassword = () => {
   const navigate = useNavigate();
+
   const [notify, setNotify] = useState({
     isOpen: false,
     message: "",
     type: "",
     pagename: "",
   });
+
   const [formData, setFormData] = useState({
     email: "",
     oldPassword: "",
@@ -46,13 +38,17 @@ const ChangePassword = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
-  function ChangePassword() {
+
+  const handleSubmit = () => {
     if (!validate()) return;
+    setLoading(true);
+
     const data = {
       email: formData.email,
       oldPassword: formData.oldPassword,
       newPassword: formData.newPassword,
     };
+
     application
       .post("/auth/changePassword", data)
       .then((response) => {
@@ -70,64 +66,87 @@ const ChangePassword = () => {
         setNotify({
           isOpen: true,
           type: "error",
-          pagename: "Expense Data",
+          pagename: "Change Password",
           message: error.response?.data?.message || "Something went wrong",
         });
+      })
+      .finally(() => {
+        setLoading(false);
       });
-  }
+  };
 
   return (
-    <Card sx={{ maxWidth: 400, margin: "auto", mt: 10, p: 3, boxShadow: 5 }}>
-      <CardContent>
-        <Typography variant="h5" gutterBottom>
+    <Box
+      sx={{
+        minHeight: "90vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#f5f7fa",
+      }}
+    >
+      <Paper
+        elevation={4}
+        sx={{
+          width: "100%",
+          maxWidth: 450,
+          p: 4,
+          borderRadius: 3,
+          backgroundColor: "#fff",
+        }}
+      >
+        <Typography variant="h5" align="center" gutterBottom>
           Change Password
         </Typography>
-        <TextField
-          fullWidth
-          label="Email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          error={!!errors.email}
-          helperText={errors.email}
-          margin="normal"
-        />
-        <TextField
-          fullWidth
-          label="Old Password"
-          name="oldPassword"
-          type="password"
-          value={formData.oldPassword}
-          onChange={handleChange}
-          error={!!errors.oldPassword}
-          helperText={errors.oldPassword}
-          margin="normal"
-        />
-        <TextField
-          fullWidth
-          label="New Password"
-          name="newPassword"
-          type="password"
-          value={formData.newPassword}
-          onChange={handleChange}
-          error={!!errors.newPassword}
-          helperText={errors.newPassword}
-          margin="normal"
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          fullWidth
-          disabled={loading}
-          sx={{ mt: 2 }}
-          onClick={ChangePassword}
-        >
-          Change Password
-        </Button>
-      </CardContent>
-      <CTLNotification notify={notify} setNotify={setNotify} />
-    </Card>
+
+        <Box component="form" noValidate autoComplete="off" sx={{ mt: 2 }}>
+          <TextField
+            label="Email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            error={!!errors.email}
+            helperText={errors.email}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Old Password"
+            name="oldPassword"
+            type="password"
+            value={formData.oldPassword}
+            onChange={handleChange}
+            error={!!errors.oldPassword}
+            helperText={errors.oldPassword}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="New Password"
+            name="newPassword"
+            type="password"
+            value={formData.newPassword}
+            onChange={handleChange}
+            error={!!errors.newPassword}
+            helperText={errors.newPassword}
+            fullWidth
+            margin="normal"
+          />
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            fullWidth
+            disabled={loading}
+            sx={{ mt: 3 }}
+          >
+            {loading ? "Updating..." : "Change Password"}
+          </Button>
+        </Box>
+        <CTLNotification notify={notify} setNotify={setNotify} />
+      </Paper>
+    </Box>
   );
 };
 
