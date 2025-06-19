@@ -44,6 +44,16 @@ const ExpenseTable = ({ updateList, setUpdateList }) => {
     type: "",
     pagename: "",
   });
+  const [searchText, setSearchText] = useState("");
+
+  const buildURL = () => {
+    let url = "/expense/list?";
+    if (filters.fromDate) url += `fromDate=${filters.fromDate}&`;
+    if (filters.toDate) url += `toDate=${filters.toDate}&`;
+    if (filters.text || searchText) url += `text=${filters.text || searchText}`;
+    return url;
+  };
+  const dynamicUrl = buildURL();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -70,7 +80,6 @@ const ExpenseTable = ({ updateList, setUpdateList }) => {
     setConfirmDelete(false);
     setSelectedRows(null);
   };
-  console.log("///////////////", selectedRows);
   const DeleteExpens = () => {
     if (!selectedRows) return;
     application
@@ -175,6 +184,7 @@ const ExpenseTable = ({ updateList, setUpdateList }) => {
   function onClose() {
     setOpenFilterModal(false);
   }
+
   return (
     <>
       <Box sx={{ p: 3 }}>
@@ -189,12 +199,14 @@ const ExpenseTable = ({ updateList, setUpdateList }) => {
           }}
         >
           <CustomTable
+            dynamicSearch={true}
             searchEnable={true}
             filterEnable={true}
             title="Your Expenses"
-            apiUrl={`${APIUrl}/expense/list`}
+            apiUrl={dynamicUrl}
             columns={columns}
             updateList={updateList}
+            onSearchChange={(val) => setSearchText(val)}
           />
           <ColumnFilter
             open={openFilterModal}
@@ -204,12 +216,12 @@ const ExpenseTable = ({ updateList, setUpdateList }) => {
             setFilters={setFilters}
             columns={columns}
           />
-            <DeleteConfirmation
-        entityName="Expense Data"
-        confirmDelete={confirmDelete}
-        onAgree={DeleteExpens}
-        onCancel={onCancel}
-      />
+          <DeleteConfirmation
+            entityName="Expense Data"
+            confirmDelete={confirmDelete}
+            onAgree={DeleteExpens}
+            onCancel={onCancel}
+          />
         </Box>
       </Box>
     </>

@@ -113,6 +113,7 @@ const UserDetails = () => {
   return (
     <>
       <CustomTable
+        dynamicSearch={false}
         searchEnable={true}
         filterEnable={true}
         title="User Details"

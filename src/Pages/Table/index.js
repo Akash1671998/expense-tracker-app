@@ -1,4 +1,3 @@
-// src/components/common/CustomTable.js
 import React, { useEffect, useState } from "react";
 import {
   Table,
@@ -24,9 +23,11 @@ const CustomTable = ({
   searchEnable,
   filterEnable,
   updateList,
+  onSearchChange,
+  dynamicSearch = false,
 }) => {
   const [data, setData] = useState([]);
-  const [search, setSearch] = useState("");
+  const [localSearch, setLocalSearch] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -43,17 +44,24 @@ const CustomTable = ({
 
   useEffect(() => {
     fetchData();
-  }, [updateList]);
+  }, [apiUrl, updateList]);
 
   const handleSearchChange = (e) => {
-    setSearch(e.target.value.toLowerCase());
+    const value = e.target.value;
+    if (dynamicSearch) {
+      onSearchChange?.(value); // if provided
+    } else {
+      setLocalSearch(value.toLowerCase());
+    }
   };
 
-  const filteredData = data.filter((item) =>
-    columns.some((col) =>
-      item[col.field]?.toString().toLowerCase().includes(search)
-    )
-  );
+  const filteredData = !dynamicSearch
+    ? data.filter((item) =>
+        columns.some((col) =>
+          item[col.field]?.toString().toLowerCase().includes(localSearch)
+        )
+      )
+    : data;
 
   const handleChangePage = (event, newPage) => setPage(newPage);
   const handleChangeRowsPerPage = (event) => {
@@ -62,8 +70,9 @@ const CustomTable = ({
   };
 
   function handleTuneClick() {
-    alert("filter");
+    alert("Filter clicked");
   }
+
   return (
     <Paper
       elevation={3}
@@ -79,26 +88,25 @@ const CustomTable = ({
       <Typography variant="h6" gutterBottom>
         {title}
       </Typography>
+
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
         {searchEnable && (
           <TextField
             variant="outlined"
             placeholder="Search..."
-            value={search}
             onChange={handleSearchChange}
             style={{ width: 300 }}
           />
         )}
-        <IconButton
-          onClick={handleTuneClick}
-          color="success"
-          sx={{
-            width: 60,
-            height: 60,
-          }}
-        >
-          <TuneIcon sx={{ fontSize: 36, alignItems: "center" }} />
-        </IconButton>
+        {filterEnable && (
+          <IconButton
+            onClick={handleTuneClick}
+            color="success"
+            sx={{ width: 60, height: 60 }}
+          >
+            <TuneIcon sx={{ fontSize: 36 }} />
+          </IconButton>
+        )}
       </Box>
 
       <TableContainer>
@@ -136,6 +144,7 @@ const CustomTable = ({
           </TableBody>
         </Table>
       </TableContainer>
+
       <TablePagination
         component="div"
         count={filteredData.length}
